@@ -141,13 +141,6 @@ def resize(w, h, expected_height, image_min_width, image_max_width):
     return new_w, expected_height
 
 def process_image(image, image_height, image_min_width, image_max_width):
-    image = image*255
-    image = np.array(image, dtype=np.uint8)
-    if np.ndim(image)>3:
-        assert image.shape[0] == 1
-        image = image[0]
-    image = Image.fromarray(image)
-
     img = image.convert('RGB')
 
     w, h = img.size

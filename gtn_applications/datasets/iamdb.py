@@ -15,6 +15,10 @@ import re
 import torch
 from torchvision import transforms
 
+from vietocr.tool.translate import *
+
+
+
 
 SPLITS = {
     "train": ["trainset"],
@@ -83,6 +87,7 @@ class Dataset(torch.utils.data.Dataset):
 
     def __getitem__(self, index):
         img, text = self.dataset[index]
+        img = process_input(img)
         inputs = self.transforms(img)
         outputs = self.preprocessor.to_index(text)
         return inputs, outputs

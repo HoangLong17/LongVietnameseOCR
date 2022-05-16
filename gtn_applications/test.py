@@ -10,6 +10,7 @@ import editdistance
 import json
 import os
 import torch
+import sys
 
 import models
 import utils
@@ -17,6 +18,7 @@ import utils
 import matplotlib.pyplot as plt
 from PIL import Image
 
+sys.path.append("../vietocr")
 from vietocr.tool.predictor import Predictor
 from vietocr.tool.config import Cfg
 
