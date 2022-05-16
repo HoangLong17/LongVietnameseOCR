@@ -28,7 +28,8 @@ SPLITS = {
 
 
 class Dataset(torch.utils.data.Dataset):
-    def __init__(self, data_path, preprocessor, split, augment=False):
+    def __init__(self, data_path, preprocessor, split, config, augment=False):
+        self.config = config
         forms = load_metadata(
             data_path, preprocessor.wordsep, use_words=preprocessor.use_words
         )
@@ -87,7 +88,8 @@ class Dataset(torch.utils.data.Dataset):
 
     def __getitem__(self, index):
         img, text = self.dataset[index]
-        img = process_input(img)
+        img = process_input(img, self.config['dataset']['image_height'], 
+                self.config['dataset']['image_min_width'], self.config['dataset']['image_max_width'])
         inputs = self.transforms(img)
         outputs = self.preprocessor.to_index(text)
         return inputs, outputs

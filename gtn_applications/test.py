@@ -65,6 +65,14 @@ def test(args):
     else:
         device = torch.device("cpu")
 
+    #load vietocr config
+    vietocr_config = Cfg.load_config_from_name('vgg_transformer')
+    
+    vietocr_config['weights'] = 'https://drive.google.com/uc?id=13327Y1tz1ohsm5YZMyXVMPIOjoOA0OaA'
+    vietocr_config['cnn']['pretrained']=False
+    vietocr_config['device'] = 'cuda:0'
+    vietocr_config['predictor']['beamsearch']=False
+
     dataset = config["data"]["dataset"]
     if not os.path.exists(f"datasets/{dataset}.py"):
         raise ValueError(f"Unknown dataset {dataset}")
@@ -80,7 +88,7 @@ def test(args):
         use_words=config["data"].get("use_words", False),
         prepend_wordsep=config["data"].get("prepend_wordsep", False),
     )
-    data = dataset.Dataset(data_path, preprocessor, split=args.split)
+    data = dataset.Dataset(data_path, preprocessor, split=args.split, vietocr_config)
     loader = utils.data_loader(data, config)
 
     criterion, output_size = utils.load_criterion(
@@ -95,13 +103,6 @@ def test(args):
     # models.load_from_checkpoint(model, criterion, args.checkpoint_path, args.load_last)
     
     #load model from vietocr
-    vietocr_config = Cfg.load_config_from_name('vgg_transformer')
-    
-    vietocr_config['weights'] = 'https://drive.google.com/uc?id=13327Y1tz1ohsm5YZMyXVMPIOjoOA0OaA'
-    vietocr_config['cnn']['pretrained']=False
-    vietocr_config['device'] = 'cuda:0'
-    vietocr_config['predictor']['beamsearch']=False
-
     model = Predictor(vietocr_config)
 
     model.model.eval()
