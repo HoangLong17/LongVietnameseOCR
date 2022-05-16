@@ -102,7 +102,7 @@ def test(args):
 
     model = Predictor(vietocr_config)
 
-    model.eval()
+    model.model.eval()
     meters = utils.Meters()
     for inputs, targets in loader:
         outputs = model.predict(inputs.to(device))
