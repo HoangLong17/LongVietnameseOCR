@@ -88,7 +88,7 @@ def test(args):
         use_words=config["data"].get("use_words", False),
         prepend_wordsep=config["data"].get("prepend_wordsep", False),
     )
-    data = dataset.Dataset(data_path, preprocessor, split=args.split, vietocr_config)
+    data = dataset.Dataset(data_path, preprocessor, split=args.split, config=vietocr_config)
     loader = utils.data_loader(data, config)
 
     criterion, output_size = utils.load_criterion(
