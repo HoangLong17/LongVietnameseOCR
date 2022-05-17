@@ -73,6 +73,7 @@ class BatchSortedSampler(torch.utils.data.Sampler):
             global_batches[world_rank + i * world_size] for i in range(self.length)
         ]
         self.shuffle = shuffle
+        print("Success sample")
 
     def __iter__(self):
         order = torch.randperm if self.shuffle else torch.arange
@@ -84,13 +85,15 @@ class BatchSortedSampler(torch.utils.data.Sampler):
 
 def padding_collate(samples):
     inputs, targets = zip(*samples)
+    print(0)
 
     # collate inputs:
-    h = inputs[0].shape[1]
-    max_input_len = max(ip.shape[2] for ip in inputs)
-    batch_inputs = torch.zeros((len(inputs), inputs[0].shape[1], max_input_len))
+    #h = inputs[0].shape[1]
+
+    max_input_len = max(list(ip.size())[2] for ip in inputs)
+    batch_inputs = torch.zeros((len(inputs), list(inputs[0].size())[1], max_input_len))
     for e, ip in enumerate(inputs):
-        batch_inputs[e, :, : ip.shape[2]] = ip
+        batch_inputs[e, :, : list(ip.size())[2]] = ip
 
     return batch_inputs, targets
 

@@ -10,6 +10,7 @@ import itertools
 import multiprocessing as mp
 import os
 import PIL.Image
+import numpy as np
 import random
 import re
 import torch
@@ -59,7 +60,7 @@ class Dataset(torch.utils.data.Dataset):
             )
         self.transforms.extend(
             [
-                transforms.ToTensor(),
+                #transforms.ToTensor(),
                 transforms.Normalize(mean=[0.912], std=[0.168]),
             ]
         )
@@ -90,6 +91,7 @@ class Dataset(torch.utils.data.Dataset):
         img, text = self.dataset[index]
         img = process_input(img, self.config['dataset']['image_height'], 
                 self.config['dataset']['image_min_width'], self.config['dataset']['image_max_width'])
+        #img = tensor_to_image(img)
         inputs = self.transforms(img)
         outputs = self.preprocessor.to_index(text)
         return inputs, outputs
@@ -97,6 +99,13 @@ class Dataset(torch.utils.data.Dataset):
     def __len__(self):
         return len(self.dataset)
 
+def tensor_to_image(tensor):
+    tensor = tensor*255
+    tensor = np.array(tensor, dtype=np.uint8)
+    if np.ndim(tensor)>3:
+        assert tensor.shape[0] == 1
+        tensor = tensor[0]
+    return PIL.Image.fromarray(tensor)
 
 def load_image(example):
     img_file, box, height = example
